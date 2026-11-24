@@ -1,0 +1,23 @@
+{
+    "name": "apa102",
+    "version": "1.0.0",
+    "description": "Blocks for APA102 / DotStar / SK9822 LED strips on the micro:bit",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*"
+    },
+    "files": [
+        "main.ts",
+        "README.md"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "supportedTargets": [
+        "microbit"
+    ],
+    "public": true,
+    "targetVersions": {
+        "target": "7.0.0"
+    }
+}
