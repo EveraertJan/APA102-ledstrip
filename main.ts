@@ -37,6 +37,10 @@ enum ApaColors {
 //% groups=['Create', 'Set', 'Show', 'Color', 'Advanced']
 namespace apa102 {
 
+    // SPI pins currently configured (-1 = not configured yet)
+    let spiData: number = -1;
+    let spiClock: number = -1;
+
     /**
      * A strip of APA102 LEDs.
      */
@@ -62,12 +66,18 @@ namespace apa102 {
                 this.simShow();
                 return;
             }
-            // pick a MISO pin that does not clash with data or clock
-            let miso = DigitalPin.P14;
-            if (this.dataPin == miso || this.clockPin == miso) miso = DigitalPin.P16;
-            pins.spiPins(this.dataPin, miso, this.clockPin);
-            pins.spiFormat(8, 0);
-            pins.spiFrequency(4000000);
+            // Configure SPI only once (or when the pins change): every pins.spiPins call
+            // claims an SPI peripheral, and calling it repeatedly causes panic 090.
+            if (spiData != this.dataPin || spiClock != this.clockPin) {
+                // pick a MISO pin that does not clash with data or clock
+                let miso = DigitalPin.P14;
+                if (this.dataPin == miso || this.clockPin == miso) miso = DigitalPin.P16;
+                pins.spiPins(this.dataPin, miso, this.clockPin);
+                pins.spiFormat(8, 0);
+                pins.spiFrequency(4000000);
+                spiData = this.dataPin;
+                spiClock = this.clockPin;
+            }
             pins.spiTransfer(this.buf, this.rx);
         }
 
