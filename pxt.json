@@ -4,8 +4,7 @@
     "description": "Blocks for APA102 / DotStar / SK9822 LED strips on the micro:bit",
     "license": "MIT",
     "dependencies": {
-        "core": "*",
-        "neopixel": "github:microsoft/pxt-neopixel"
+        "core": "*"
     },
     "files": [
         "main.ts",

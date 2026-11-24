@@ -53,7 +53,6 @@ namespace apa102 {
         start: number;    // first LED of this (range of the) strip
         _length: number;  // number of LEDs in this (range of the) strip
         _brightness: number; // 0..31 (hardware global brightness)
-        simStrip: neopixel.Strip; // simulator only
 
         /**
          * Send the colors to the LEDs.
@@ -61,11 +60,6 @@ namespace apa102 {
         //% blockId="apa102_show" block="%strip|show"
         //% weight=90 blockGap=8 group="Show"
         show() {
-            // In the MakeCode simulator, draw the strip via the NeoPixel simulator part
-            if (control.deviceDalVersion() == "sim") {
-                this.simShow();
-                return;
-            }
             // Configure SPI only once (or when the pins change): every pins.spiPins call
             // claims an SPI peripheral, and calling it repeatedly causes panic 090.
             if (spiData != this.dataPin || spiClock != this.clockPin) {
@@ -242,7 +236,6 @@ namespace apa102 {
             s.start = this.start + start;
             s._length = length;
             s._brightness = this._brightness;
-            s.simStrip = this.simStrip;
             return s;
         }
 
@@ -253,16 +246,6 @@ namespace apa102 {
         //% weight=40 blockGap=8 group="Advanced" advanced=true
         length(): number {
             return this._length;
-        }
-
-        // simulator only: copy the frame buffer into a NeoPixel strip so it is drawn in the simulator
-        private simShow() {
-            this.simStrip.setBrightness(Math.idiv((this.buf[4] & 0x1F) * 255, 31));
-            for (let i = 0; i < this.total; i++) {
-                const o = 4 + i * 4;
-                this.simStrip.setPixelColor(i, (this.buf[o + 3] << 16) | (this.buf[o + 2] << 8) | this.buf[o + 1]);
-            }
-            this.simStrip.show();
         }
 
         private setRaw(i: number, r: number, g: number, b: number) {
@@ -311,9 +294,6 @@ namespace apa102 {
         strip.dataPin = dataPin;
         strip.clockPin = clockPin;
         strip.total = n;
-        if (control.deviceDalVersion() == "sim") {
-            strip.simStrip = neopixel.create(dataPin, n, NeoPixelMode.RGB);
-        }
         strip.start = 0;
         strip._length = n;
         return strip;
