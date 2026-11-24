@@ -48,4 +48,3 @@ In MakeCode (https://makecode.microbit.org): **Extensions** → paste the GitHub
 ```package
 apa102=github:YOUR-USERNAME/pxt-apa102
 ```
-# APA102-ledstrip
